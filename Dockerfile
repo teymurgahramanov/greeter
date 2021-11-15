@@ -1,10 +1,14 @@
-FROM golang:alpine AS build-env
-RUN mkdir /go/src/app && apk update && apk add git
-ADD src/main.go /go/src/app/
-WORKDIR /go/src/app
-RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -ldflags '-extldflags "-static"' -o app .
+FROM golang AS build
+WORKDIR ${GOPATH}
+COPY greeter.go src/
+RUN CGO_ENABLED=0 GOOS=linux go build -o bin/greeter src/greeter.go
+
+FROM alpine AS test
+RUN apk update && apk add curl
+COPY --from=build /go/bin/greeter /greeter
+RUN ["/greeterr && curl http://localhost:8080"]
 
 FROM scratch
-WORKDIR /app
-COPY --from=build-env /go/src/app/app .
-ENTRYPOINT [ "./app" ]
+EXPOSE 8080
+COPY --from=build /go/bin/greeter /greeter
+ENTRYPOINT ["/greeter"]

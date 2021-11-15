@@ -4,3 +4,4 @@ Steps:
  - Test code
  - Publish Image
  - Deploy on Cluster
+ - Notify on Slack
