@@ -10,7 +10,7 @@ pipeline {
     agent none
     stages {
         stage('build') {
-            agent { docker { image 'golang' reuseNode true } }
+            agent { docker { image 'golang' } }
             steps {
                 sh 'cd ${GOPATH}/src'
                 sh 'mkdir -p ${GOPATH}/src/${JOB_NAME}'
