@@ -27,6 +27,7 @@ pipeline {
                 script {    
                     node {
                         def image
+                        def imageTag
                         stage('build_image') {
                             checkout scm
                             /*
@@ -36,8 +37,8 @@ pipeline {
                                 def imageTag = env.BRANCH_NAME
                             }
                             */
-                            def imageTag = env.BRANCH_NAME
-                            def image = docker.build("${imageName}:${imageTag}")
+                            imageTag = env.BRANCH_NAME
+                            image = docker.build("${imageName}:${imageTag}")
                         }     
                         stage('test_image') {
                             sh "docker network create ${JOB_NAME}"
