@@ -26,19 +26,13 @@ pipeline {
             steps {
                 script {
                     node {
-                        if ( "${BRANCH_NAME}" == 'master' || "${BRANCH_NAME}"  == 'main' ) {
-                            environment {
-                                imageTag = "${BRANCH_NAME}"
-                            }
-                        }
-                        else {
-                            environment {
-                                imageTag = "${BRANCH_NAME}"
-                            }
-                        }                         
-                        def image
+                        if ( env.BRANCH_NAME == 'master' || env.BRANCH_NAME  == 'main' ) {
+                            def imageTag = 'latest'
+                        } else {
+                            def imageTag = env.BRANCH_NAME
+                        }                       
                         checkout scm
-                        image = docker.build("${imageName}:${imageTag}")
+                        def image = docker.build("${imageName}:${imageTag}")
                         stage('test_image') {
                             sh "docker network create ${JOB_NAME}"
                             docker.image("${imageName}").withRun("--name ${JOB_NAME} --net ${JOB_NAME}") { test ->
