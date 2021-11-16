@@ -34,7 +34,7 @@ pipeline {
                         }                         
                         def image
                         checkout scm
-                        image = docker.build("${imageName}":"${imageTag}")
+                        image = docker.build("${imageName}")
                         stage('test_image') {
                             sh "docker network create ${JOB_NAME}"
                             docker.image("${imageName}").withRun("--name ${JOB_NAME} --net ${JOB_NAME}") { test ->
