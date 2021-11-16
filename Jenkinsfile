@@ -10,21 +10,24 @@ pipeline {
     agent none
     stages {
         stage('build') {
+            agent { docker { image 'golang' reuseNode true } }
             steps {
-                image = docker.build imageName
+                sh 'cd ${GOPATH}/src'
+                sh 'mkdir -p ${GOPATH}/src/${JOB_NAME}'
+                sh 'cp -r ${WORKSPACE}/* ${GOPATH}/src/${JOB_NAME}'
+                sh 'go build'
             }
-
         }
         stage('test') {
             image.inside {
-                sh 'echo "Tests passed"'
+                sh 'go clean -cache'
+                sh 'go test ./... -v -short'  
             }
         }
     }
     post {
         always {
-        /* Notify on slack */
-        echo "Notification"
+            echo "Slack Notification"
         }
     }
     }
