@@ -35,6 +35,7 @@ pipeline {
                         checkout scm
                         image = docker.build("${imageName}")
                         stage('test_image') {
+                            sh "docker network create ${JOB_NAME}"
                             docker.image("${imageName}").withRun("--name ${JOB_NAME} --net ${JOB_NAME}") { c ->
                                 docker.image("curlimages/curl").withRun("--net ${JOB_NAME}") { 
                                     sh 'curl http://${JOB_NAME}:8080'
@@ -54,6 +55,7 @@ pipeline {
     post {
         always {
             echo "Slack Notification"
+            sh "docker network rm ${JOB_NAME}"
         }
     }
 }
