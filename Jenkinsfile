@@ -15,7 +15,7 @@ pipeline {
                 sh 'cd ${GOPATH}/src'
                 sh 'mkdir -p ${GOPATH}/src/${JOB_NAME}'
                 sh 'cp -r ${WORKSPACE}/* ${GOPATH}/src/${JOB_NAME}'
-                sh 'go build'
+                sh 'go build -o greeter'
             }
         }
         stage('test') {
