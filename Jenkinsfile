@@ -10,6 +10,7 @@ pipeline {
     stages {
         stage('build_code') {
             steps {
+                slackSend message:"started ${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)"
                 sh 'cd ${GOPATH}/src'
                 sh 'mkdir -p ${GOPATH}/src/${JOB_NAME}'
                 sh 'cp -r ${WORKSPACE}/* ${GOPATH}/src/${JOB_NAME}'
@@ -53,8 +54,13 @@ pipeline {
     }
     post {
         always {
-            echo "Slack Notification"
-            sh "docker network rm ${JOB_NAME}"
+            sh "docker system prune -af"
+        }
+        success {
+            slackSend message:"Build deployed successfully - ${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)"
+        }
+        failure {
+            slackSend message:"Build failed  - ${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)"
         }
     }
 }
