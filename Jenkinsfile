@@ -35,8 +35,8 @@ pipeline {
                         checkout scm
                         image = docker.build("${imageName}")
                         stage('test_image') {
-                            docker.image("${imageName}").withRun("--name ${JOB_NAME} --net ${JOB_NAME}")
-                            docker.image("curlimages/curl").withRun("--net ${JOB_NAME}").inside {
+                            docker.image("${imageName}").inside("--name ${JOB_NAME} --net ${JOB_NAME}")
+                            docker.image("curlimages/curl").inside("--net ${JOB_NAME}") {
                                 sh 'curl http://${JOB_NAME}:8080'
                             }
                         }
