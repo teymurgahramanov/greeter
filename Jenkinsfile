@@ -1,7 +1,6 @@
 pipeline {
     environment {
         imageName = 'teymurgahramanov/greeter'
-        imageTag = 'latest'
         registryCred = 'dockerhub-teymurgahramanov'
     }
     options { timestamps() }
@@ -26,18 +25,24 @@ pipeline {
             steps {
                 script {
                     node {
+                        if ( ${BRANCH_NAME} == 'master' || ${BRANCH_NAME} == 'main' ) {
+                            imageTag = 'latest'
+                        }
+                        else {
+                            imageTag = ${BRANCH_NAME}
+                        }                         
                         def image
                         checkout scm
                         image = docker.build("${imageName}")
                         stage('test_image') {
-                            docker.image("${imageName}")
+                            docker.image("${imageName}").withRun("-n ${JOB_NAME}")
                             docker.image("curlimages/curl").inside {
                                 sh 'curl http://${JOB_NAME}:8080'
                             }
                         }
                         stage('push_image') {
                             docker.withRegistry("${registryCred}") {
-                                app.push("latest")
+                                app.push("${imageTag}")
                             }
                         }
                     }
