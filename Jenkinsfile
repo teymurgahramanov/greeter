@@ -26,11 +26,11 @@ pipeline {
             steps {
                 script {
                     node {
-                        if ( ${env.BRANCH_NAME} == 'master' || ${env.BRANCH_NAME}  == 'main' ) {
-                            imageTag = 'latest'
+                        if ( "${env.BRANCH_NAME}" == 'master' || "${env.BRANCH_NAME}"  == 'main' ) {
+                            def imageTag = 'latest'
                         }
                         else {
-                            imageTag = ${env.BRANCH_NAME} 
+                            def imageTag = "${env.BRANCH_NAME}"
                         }                         
                         def image
                         checkout scm
