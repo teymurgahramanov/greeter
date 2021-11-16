@@ -10,7 +10,7 @@ pipeline {
     stages {
         stage('build_code') {
             steps {
-                slackSend message:"started ${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)"
+                slackSend color:"warning", message:"started ${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)"
                 sh 'cd ${GOPATH}/src'
                 sh 'mkdir -p ${GOPATH}/src/${JOB_NAME}'
                 sh 'cp -r ${WORKSPACE}/* ${GOPATH}/src/${JOB_NAME}'
@@ -57,10 +57,10 @@ pipeline {
             sh "docker system prune -af"
         }
         success {
-            slackSend message:"Build deployed successfully - ${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)"
+            slackSend color:"good", message:"Build deployed successfully - ${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)"
         }
         failure {
-            slackSend message:"Build failed  - ${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)"
+            slackSend color:"danger", failOnError: true, message:"Build failed  - ${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)"
         }
     }
 }
