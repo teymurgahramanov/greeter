@@ -28,15 +28,15 @@ pipeline {
                     node {
                         def image
                         checkout scm
-                        stage(build_image) {
+                        stage('build_image') {
                             image = docker.build("${imageName}")
                         }
-                        stage(test_image) {
+                        stage('test_image') {
                             image.inside {
                                 sh 'curl http://localhost:8080'
                             }
                         }
-                        stage(push_image) {
+                        stage('push_image') {
                             docker.withRegistry("${registryCred}") {
                                 app.push("latest")
                             }
