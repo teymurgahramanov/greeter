@@ -1,7 +1,7 @@
 pipeline {
     environment {
         imageName = 'teymurgahramanov/greeter'
-        registry = 'https://hub.docker.com'
+        registry = 'https://registry.hub.docker.com'
         registryCred = 'dockerhub-teymurgahramanov'
     }
     options { timestamps() }
@@ -34,7 +34,7 @@ pipeline {
                         }                         
                         def image
                         checkout scm
-                        image = docker.build("${imageName}")
+                        image = docker.build("${imageName}":"${imageTag}")
                         stage('test_image') {
                             sh "docker network create ${JOB_NAME}"
                             docker.image("${imageName}").withRun("--name ${JOB_NAME} --net ${JOB_NAME}") { test ->
@@ -45,7 +45,7 @@ pipeline {
                         }    
                         stage('push_image') {
                             docker.withRegistry("${registry}","${registryCred}") {
-                                image.push("${imageTag}")
+                                image.push()
                             }
                         }
                     }
