@@ -25,12 +25,12 @@ pipeline {
         stage('build_image') {
             steps {
                 script {
-                    node {
-                        if ( env.BRANCH_NAME == 'master' || env.BRANCH_NAME  == 'main' ) {
-                            def imageTag = 'latest'
-                        } else {
-                            def imageTag = env.BRANCH_NAME
-                        }                       
+                    if ( env.BRANCH_NAME == 'master' || env.BRANCH_NAME  == 'main' ) {
+                        def imageTag = 'latest'
+                    } else {
+                        def imageTag = env.BRANCH_NAME
+                    }                              
+                    node {             
                         checkout scm
                         def image = docker.build("${imageName}:${imageTag}")
                         stage('test_image') {
