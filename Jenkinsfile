@@ -44,7 +44,7 @@ pipeline {
                         }    
                         stage('push_image') {
                             docker.withRegistry("${registryCred}") {
-                                app.push("${imageTag}")
+                                image.push("${imageTag}")
                             }
                         }
                     }
