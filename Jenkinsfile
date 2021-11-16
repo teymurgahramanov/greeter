@@ -7,10 +7,9 @@ pipeline {
         imageTag = 'latest'
         registryCred = 'dockerhub-teymurgahramanov'
     }
-    agent none
+    agent { docker { reuseNode true image 'golang' } }
     stages {
         stage('build') {
-            agent { docker { reuseNode true image 'golang' } }
             steps {
                 sh 'cd ${GOPATH}/src'
                 sh 'mkdir -p ${GOPATH}/src/${JOB_NAME}'
