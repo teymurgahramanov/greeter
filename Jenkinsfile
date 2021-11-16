@@ -22,17 +22,19 @@ pipeline {
                 sh 'go test ./... -v -short'  
             }
         }
-        stage('build_image') {
+        stage('docker') {                  
             steps {
-                script {
-                    if ( env.BRANCH_NAME == 'master' || env.BRANCH_NAME  == 'main' ) {
-                        def imageTag = 'latest'
-                    } else {
-                        def imageTag = env.BRANCH_NAME
-                    }                              
-                    node {             
-                        checkout scm
-                        def image = docker.build("${imageName}:${imageTag}")
+                script {    
+                    node {
+                        stage('build_image') {
+                            checkout scm
+                            if ( env.BRANCH_NAME == 'master' || env.BRANCH_NAME  == 'main' ) {
+                                def imageTag = 'latest'
+                            } else {
+                                def imageTag = env.BRANCH_NAME
+                            }
+                            def image = docker.build("${imageName}:${imageTag}")        
+                        }     
                         stage('test_image') {
                             sh "docker network create ${JOB_NAME}"
                             docker.image("${imageName}").withRun("--name ${JOB_NAME} --net ${JOB_NAME}") { test ->
