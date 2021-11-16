@@ -19,7 +19,7 @@ pipeline {
             }
         }
         stage('test') {
-            image.inside {
+            agent { docker { image 'golang' reuseNode true } }
                 sh 'go clean -cache'
                 sh 'go test ./... -v -short'  
             }
