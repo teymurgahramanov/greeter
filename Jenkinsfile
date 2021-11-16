@@ -36,9 +36,10 @@ pipeline {
                         image = docker.build("${imageName}")
                         stage('test_image') {
                             sh "docker network create ${JOB_NAME}"
-                            docker.image("${imageName}").withRun("--name ${JOB_NAME} --net ${JOB_NAME}") {}
-                            docker.image("curlimages/curl").withRun("--net ${JOB_NAME}") { 
-                                 sh 'curl http://${JOB_NAME}:8080'
+                            docker.image("${imageName}").withRun("--name ${JOB_NAME} --net ${JOB_NAME}") { test ->
+                                docker.image("curlimages/curl").inside("--net ${JOB_NAME}") { 
+                                    sh 'curl http://${JOB_NAME}:8080'
+                                }
                             }
                         }    
                         stage('push_image') {
