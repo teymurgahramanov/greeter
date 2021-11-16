@@ -29,12 +29,12 @@ pipeline {
                         checkout scm
                         if ( env.BRANCH_NAME != null ) {
                             if ( env.BRANCH_NAME == 'master' || env.BRANCH_NAME  == 'main'  ) {
-                                def imageTag = 'latest'
+                                imageTag = 'latest'
                             } else {
-                                def imageTag = env.BRANCH_NAME
+                                imageTag = env.BRANCH_NAME
                             }
                         } else {
-                            def imageTag = 'latest'
+                            imageTag = 'latest'
                         } 
                         image = docker.build("${imageName}:${imageTag}")
                         stage('test_image') {
