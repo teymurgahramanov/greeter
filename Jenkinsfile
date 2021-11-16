@@ -26,6 +26,7 @@ pipeline {
             steps {
                 script {    
                     node {
+                        def image
                         stage('build_image') {
                             checkout scm
                             /*
