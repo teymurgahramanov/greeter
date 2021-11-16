@@ -37,7 +37,7 @@ pipeline {
                             }
                             def imageTag = env.BRANCH_NAME
                             */
-                            echo ${BRANCH_NAME}
+                            echo env.BRANCH_NAME
                             image = docker.build("${imageName}:${imageTag}")
                         }     
                         stage('test_image') {
