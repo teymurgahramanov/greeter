@@ -26,14 +26,14 @@ pipeline {
             steps {
                 script {
                     node {
-                        if ( "${env.BRANCH_NAME}" == 'master' || "${env.BRANCH_NAME}"  == 'main' ) {
+                        if ( "${BRANCH_NAME}" == 'master' || "${BRANCH_NAME}"  == 'main' ) {
                             environment {
-                                imageTag = "${env.BRANCH_NAME}"
+                                imageTag = "${BRANCH_NAME}"
                             }
                         }
                         else {
                             environment {
-                                imageTag = "${env.BRANCH_NAME}"
+                                imageTag = "${BRANCH_NAME}"
                             }
                         }                         
                         def image
