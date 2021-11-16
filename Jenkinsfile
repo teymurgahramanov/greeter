@@ -1,6 +1,7 @@
 pipeline {
     environment {
         imageName = 'teymurgahramanov/greeter'
+        registry = 'https://hub.docker.com'
         registryCred = 'dockerhub-teymurgahramanov'
     }
     options { timestamps() }
@@ -43,7 +44,7 @@ pipeline {
                             }
                         }    
                         stage('push_image') {
-                            docker.withRegistry("${registryCred}") {
+                            docker.withRegistry("${registry}","${registryCred}") {
                                 image.push("${imageTag}")
                             }
                         }
