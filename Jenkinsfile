@@ -1,11 +1,11 @@
 pipeline {
-    options { timestamps() }
-    triggers { pollSCM('* * * * *') }
     environment {
         imageName = 'teymurgahramanov/greeter'
         imageTag = 'latest'
         registryCred = 'dockerhub-teymurgahramanov'
     }
+    options { timestamps() }
+    triggers { pollSCM('* * * * *') }
     agent { docker { reuseNode true image 'golang' } }
     stages {
         stage('build_code') {
@@ -22,18 +22,17 @@ pipeline {
                 sh 'go test ./... -v -short'  
             }
         }
-        stage('dockerize') {
+        stage('build_image') {
             steps {
                 script {
                     node {
                         def image
                         checkout scm
-                        stage('build_image') {
-                            image = docker.build("${imageName}")
-                        }
+                        image = docker.build("${imageName}")
                         stage('test_image') {
-                            image.inside {
-                                sh 'curl http://localhost:8080'
+                            docker.image("${imageName}").withRun("-n ${JOB_NAME}")
+                            docker.image("curlimages/curl").inside {
+                                sh 'curl http://${JOB_NAME}:8080'
                             }
                         }
                         stage('push_image') {
