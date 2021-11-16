@@ -30,5 +30,4 @@ pipeline {
             echo "Slack Notification"
         }
     }
-    }
 }
