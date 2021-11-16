@@ -27,7 +27,7 @@ pipeline {
                 script {    
                     node {
                         checkout scm
-                        if ( env.BRANCH_NAME == 'master' || env.BRANCH_NAME  == 'main' || env.BRANCH_NAME  == 'null' ) {
+                        if ( env.BRANCH_NAME == 'master' || 'main' || 'null' ) {
                             imageTag = 'latest'
                         } else {
                             imageTag = env.BRANCH_NAME
