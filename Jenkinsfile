@@ -1,32 +1,19 @@
-def imageName = 'teymurgahramanov/greeter'
-def registry = 'https://registry.hub.docker.com'
-def registryCredId = 'dockerhub-teymurgahramanov'
-def slackTokenId = 'slack-bot-token'
-def slackChannel = '#cicd'
-def slackMessageStart = "🏁 Pipeline started – Project: ${env.JOB_NAME} Build: ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)"
-def slackMessageSuccess = "👍 Pipeline finished successfully – Project: ${env.JOB_NAME} Build: ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)"
-def slackMessageFailure = "☠️ Pipeline failed – Project: ${env.JOB_NAME} Build: ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)"
-def slackNotify(caseName,caseMessage) {
-    slackSend token:${slackTokenId}, channel:${slackChannel}, color:caseName, message:caseMessage
-}
 pipeline {
-    /*
     environment {
         imageName = 'teymurgahramanov/greeter'
         registry = 'https://registry.hub.docker.com'
         registryCredId = 'dockerhub-teymurgahramanov'
-        slackTokenId = ''
-        slackeChannel = ''
+        slackTokenId = 'slack-bot-token'
+        slackChannel = '#cicd'
         slackMessage = "Project: ${env.JOB_NAME} Build: ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)"
     }
-    */
     options { timestamps() }
     triggers { pollSCM('* * * * *') }
     agent { docker { reuseNode true image 'golang' } }
     stages {
         stage('pre') {
             steps {
-                slackNotify("warning", slackMessageStart)
+                slackSend token:"${slackTokenId}", channel:"${slackChannel}", color:"warning", message:"🏁 Pipeline started – ${slackMessage}"
             }
         }
         stage('build_code') {
@@ -82,10 +69,10 @@ pipeline {
             sh "docker system prune -af"
         }
         success {
-            slackSend color:"good", message:"👍 Pipeline finished successfully – ${slackMessage}"
+            slackSend token:"${slackTokenId}", channel:"${slackChannel}", message:"👍 Pipeline finished successfully – ${slackMessage}"
         }
         failure {
-            slackSend color:"danger", failOnError: true, message:"☠️ Pipeline failed – ${slackMessage}"
+            slackSend token:"${slackTokenId}", channel:"${slackChannel}", message:"☠️ Pipeline failed – ${slackMessage}"
         }
     }
 }
