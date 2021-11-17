@@ -7,7 +7,7 @@ def slackMessageStart = "🏁 Pipeline started – Project: ${env.JOB_NAME} Buil
 def slackMessageSuccess = "👍 Pipeline finished successfully – Project: ${env.JOB_NAME} Build: ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)"
 def slackMessageFailure = "☠️ Pipeline failed – Project: ${env.JOB_NAME} Build: ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)"
 def slackNotify(caseName,caseMessage) {
-    slackSend token:slackTokenId, channel:slackChannel, color:caseName, message:caseMessage
+    slackSend token:${slackTokenId}, channel:${slackChannel}, color:caseName, message:caseMessage
 }
 pipeline {
     /*
