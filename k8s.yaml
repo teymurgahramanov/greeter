@@ -9,6 +9,7 @@ kind: Deployment
 apiVersion: apps/v1
 metadata:
   name: greeter-deployment
+  namespace: greeter
   labels:
     app: greeter
 spec:
@@ -32,6 +33,7 @@ kind: Service
 apiVersion: v1
 metadata:
   name: greeter-service
+  namespace: greeter
 spec:
   selector:
     app: greeter
@@ -39,5 +41,5 @@ spec:
     - protocol: TCP
       port: 8080
       targetPort: 8080
-      nodePort: 32000
+      nodePort: 30080
   type: NodePort
