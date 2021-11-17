@@ -3,6 +3,7 @@ pipeline {
         imageName = 'teymurgahramanov/greeter'
         registry = 'https://registry.hub.docker.com'
         registryCred = 'dockerhub-teymurgahramanov'
+        slackMessage = "Job: ${env.JOB_NAME} Build: ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)"
     }
     options { timestamps() }
     triggers { pollSCM('* * * * *') }
@@ -10,7 +11,7 @@ pipeline {
     stages {
         stage('build_code') {
             steps {
-                slackSend color:"warning", message:"started ${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)"
+                slackSend color:"warning", message:"🏁 Pipeline started – ${slackMessage}"
                 sh 'cd ${GOPATH}/src'
                 sh 'mkdir -p ${GOPATH}/src/${JOB_NAME}'
                 sh 'cp -r ${WORKSPACE}/* ${GOPATH}/src/${JOB_NAME}'
@@ -57,10 +58,10 @@ pipeline {
             sh "docker system prune -af"
         }
         success {
-            slackSend color:"good", message:"Build deployed successfully - ${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)"
+            slackSend color:"good", message:"👍 Pipeline finished successfully – ${slackMessage}"
         }
         failure {
-            slackSend color:"danger", failOnError: true, message:"Build failed  - ${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)"
+            slackSend color:"danger", failOnError: true, message:"☠️ Pipeline failed – ${slackMessage}"
         }
     }
 }
