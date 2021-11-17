@@ -13,7 +13,7 @@ pipeline {
     stages {
         stage('pre') {
             steps {
-                slackSend token:"${slackTokenId}", channel:"${slackChannel}", color:"warning", message:"🏁 Pipeline started – ${slackMessage}"
+                slackSend tokenCredentialId:"${slackTokenId}", channel:"${slackChannel}", color:"warning", message:"🏁 Pipeline started – ${slackMessage}"
             }
         }
         stage('build_code') {
