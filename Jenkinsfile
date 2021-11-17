@@ -2,8 +2,8 @@ pipeline {
     environment {
         imageName = 'teymurgahramanov/greeter'
         registry = 'https://registry.hub.docker.com'
-        registryCredId = 'dockerhub-teymurgahramanov'
-        slackTokenId = 'slack-bot-token'
+        registryCredId = "dockerhub-teymurgahramanov"
+        slackTokenId = "slack-bot-token"
         slackChannel = '#cicd'
         slackMessage = "Project: ${env.JOB_NAME} Build: ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)"
     }
