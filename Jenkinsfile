@@ -69,10 +69,10 @@ pipeline {
             sh "docker system prune -af"
         }
         success {
-            slackSend token:"${slackTokenId}", channel:"${slackChannel}", message:"👍 Pipeline finished successfully – ${slackMessage}"
+            slackSend tokenCredentialId:"${slackTokenId}", channel:"${slackChannel}", message:"👍 Pipeline finished successfully – ${slackMessage}"
         }
         failure {
-            slackSend token:"${slackTokenId}", channel:"${slackChannel}", message:"☠️ Pipeline failed – ${slackMessage}"
+            slackSend tokenCredentialId:"${slackTokenId}", channel:"${slackChannel}", message:"☠️ Pipeline failed – ${slackMessage}"
         }
     }
 }
