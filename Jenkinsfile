@@ -2,16 +2,22 @@ pipeline {
     environment {
         imageName = 'teymurgahramanov/greeter'
         registry = 'https://registry.hub.docker.com'
-        registryCred = 'dockerhub-teymurgahramanov'
-        slackMessage = "Job: ${env.JOB_NAME} Build: ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)"
+        registryCredId = 'dockerhub-teymurgahramanov'
+        slackTokenId = ''
+        slackeChannel = ''
+        slackMessage = "Project: ${env.JOB_NAME} Build: ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)"
     }
     options { timestamps() }
     triggers { pollSCM('* * * * *') }
     agent { docker { reuseNode true image 'golang' } }
     stages {
-        stage('build_code') {
+        stage('pre') {
             steps {
                 slackSend color:"warning", message:"🏁 Pipeline started – ${slackMessage}"
+            }
+        }
+        stage('build_code') {
+            steps {
                 sh 'cd ${GOPATH}/src'
                 sh 'mkdir -p ${GOPATH}/src/${JOB_NAME}'
                 sh 'cp -r ${WORKSPACE}/* ${GOPATH}/src/${JOB_NAME}'
@@ -44,8 +50,13 @@ pipeline {
                             }
                         }    
                         stage('push_image') {
-                            docker.withRegistry("${registry}","${registryCred}") {
+                            docker.withRegistry("${registry}","${registryCredId}") {
                                 image.push()
+                            }
+                        }
+                        stage('deploy') {
+                            withKubeCredentials([credentialsId: 'kubernetes-test', serverUrl: 'https://192.168.120.207:6443/']) {
+                                sh 'kubectl apply -f k8s.yaml'
                             }
                         }
                     }
