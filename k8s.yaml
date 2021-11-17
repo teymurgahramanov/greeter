@@ -3,7 +3,7 @@ apiVersion: v1
 metadata:
   name: greeter
   labels:
-    name: greeter
+    app: greeter
 ---
 kind: Deployment
 apiVersion: apps/v1
