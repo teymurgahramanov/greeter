@@ -18,7 +18,7 @@ pipeline {
     stages {
         stage('pre') {
             steps {
-                cleanWs()
+                sh 'rm -rf *'
                 checkout scm
                 slackSend tokenCredentialId:"${slackTokenId}", channel:"${slackChannel}", color:"warning", message:"🏁 Pipeline started – ${slackMessage}"
                 script {
