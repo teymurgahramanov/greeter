@@ -16,6 +16,7 @@ pipeline {
     }
     options {
         timestamps()
+        skipDefaultCheckout true
         disableConcurrentBuilds() 
     }
     triggers { pollSCM('* * * * *') }
