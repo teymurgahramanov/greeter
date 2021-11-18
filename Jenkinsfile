@@ -1,4 +1,5 @@
 node {
+    cleanWs()
     checkout scm
     helmChart = readYaml file: "${WORKSPACE}/k8s/greeter/Chart.yaml"
     helmValues = readYaml file: "${WORKSPACE}/k8s/greeter/values.yaml"
