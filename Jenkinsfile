@@ -1,3 +1,8 @@
+node {
+    helmChart = readYaml file: './k8s/greeter/Chart.yaml'
+    helmValues = readYaml file: './k8s/greeter/values.yaml'
+}
+
 pipeline {
     environment {
         registry = 'https://registry.hub.docker.com'
@@ -13,12 +18,6 @@ pipeline {
         stage('pre') {
             steps {
                 slackSend tokenCredentialId:"${slackTokenId}", channel:"${slackChannel}", color:"warning", message:"🏁 Pipeline started – ${slackMessage}"
-                script {
-                    helmChart = readYaml file: './k8s/greeter/Chart.yaml'
-                    helmValues = readYaml file: './k8s/greeter/values.yaml'
-                    def imageName = "${helmValues.image.repository}"
-                    def imageTag = "${helmChart.appVersion}"
-                }
             }
         }
         stage('build_code') {
