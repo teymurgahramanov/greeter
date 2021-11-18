@@ -1,8 +1,3 @@
-node {
-    checkout scm
-    helmChart = readYaml file: './k8s/greeter/Chart.yaml'
-    helmValues = readYaml file: './k8s/greeter/values.yaml'
-}
 pipeline {
     environment {
         registry = 'https://registry.hub.docker.com'
