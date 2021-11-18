@@ -1,3 +1,7 @@
+node {
+    sh 'rm -rf'
+}
+}
 pipeline {
     environment {
         registry = 'https://registry.hub.docker.com'
@@ -18,14 +22,12 @@ pipeline {
     stages {
         stage('pre') {
             steps {
+                slackSend tokenCredentialId:"${slackTokenId}", channel:"${slackChannel}", color:"warning", message:"🏁 Pipeline started – ${slackMessage}"
                 script {
                     node {
-                        sh 'rm -rf *'
-                        checkout scm
                         helmChart = readYaml file: "${WORKSPACE}/k8s/greeter/Chart.yaml"
                         helmValues = readYaml file: "${WORKSPACE}/k8s/greeter/values.yaml"
                     }
-                slackSend tokenCredentialId:"${slackTokenId}", channel:"${slackChannel}", color:"warning", message:"🏁 Pipeline started – ${slackMessage}"
                 }
             }
         }
