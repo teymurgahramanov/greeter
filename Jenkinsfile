@@ -1,6 +1,7 @@
 node {
-  helmChart = readYaml file: './greeter/Chart.yaml'
-  helmValues = readYaml file: './greeter/values.yaml'
+    checkout scm
+    helmChart = readYaml file: './greeter/Chart.yaml'
+    helmValues = readYaml file: './greeter/values.yaml'
 }
 
 pipeline {
@@ -40,7 +41,6 @@ pipeline {
             steps {
                 script {    
                     node {
-                        checkout scm
                         image = docker.build("${imageName}:${imageTag}")
                         stage('test_image') {
                             sh "docker network create ${JOB_NAME}"
