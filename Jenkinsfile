@@ -1,5 +1,8 @@
 node {
-    sh 'rm -rf'
+    rm -rf *
+    checkout scm
+    helmChart = readYaml file: "${WORKSPACE}/k8s/greeter/Chart.yaml"
+    helmValues = readYaml file: "${WORKSPACE}/k8s/greeter/values.yaml"
 }
 pipeline {
     environment {
@@ -22,12 +25,6 @@ pipeline {
         stage('pre') {
             steps {
                 slackSend tokenCredentialId:"${slackTokenId}", channel:"${slackChannel}", color:"warning", message:"🏁 Pipeline started – ${slackMessage}"
-                script {
-                    node {
-                        helmChart = readYaml file: "${WORKSPACE}/k8s/greeter/Chart.yaml"
-                        helmValues = readYaml file: "${WORKSPACE}/k8s/greeter/values.yaml"
-                    }
-                }
             }
         }
         stage('build_code') {
