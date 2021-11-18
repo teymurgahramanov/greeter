@@ -57,7 +57,7 @@ pipeline {
                         }
                         stage('deploy') {
                             withKubeConfig([credentialsId: 'kubernetes-test']) {
-                                sh 'helm install greeter k8s/greeter'
+                                sh 'helm install greeter ./k8s/greeter'
                             }
                         }
                     }
