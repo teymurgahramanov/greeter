@@ -1,6 +1,4 @@
 node {
-    rm -rf *
-    checkout scm
     helmChart = readYaml file: "${WORKSPACE}/k8s/greeter/Chart.yaml"
     helmValues = readYaml file: "${WORKSPACE}/k8s/greeter/values.yaml"
 }
@@ -16,11 +14,10 @@ pipeline {
     }
     options {
         timestamps()
-        skipDefaultCheckout true
         disableConcurrentBuilds() 
     }
     triggers { pollSCM('* * * * *') }
-    agent { docker { reuseNode true image 'golang' } }
+    agent { docker { image 'golang' } }
     stages {
         stage('pre') {
             steps {
