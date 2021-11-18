@@ -1,7 +1,12 @@
+node {
+  helmChart = readYaml file: './greeter/Chart.yaml'
+  helmValues = readYaml file: './greeter/values.yaml'
+}
+
 pipeline {
     environment {
-        imageName = 'teymurgahramanov/greeter'
-        imageTag = 'v2'
+        imageName = "${helmValues.image.repository}"
+        imageTag = "${helmChart.appVersion}"
         registry = 'https://registry.hub.docker.com'
         registryCredId = "dockerhub-teymurgahramanov"
         slackTokenId = "slack-bot-token"
