@@ -75,5 +75,8 @@ pipeline {
         failure {
             slackSend tokenCredentialId:"${slackTokenId}", channel:"${slackChannel}", color:"danger", message:"☠️ Pipeline failed – ${slackMessage}"
         }
+        aborted {
+            slackSend tokenCredentialId:"${slackTokenId}", channel:"${slackChannel}", color:"danger", message:"❕ Pipeline aborted – ${slackMessage}"
+        }
     }
 }
