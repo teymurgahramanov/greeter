@@ -1,9 +1,8 @@
 node {
     checkout scm
-    helmChart = readYaml file: './greeter/Chart.yaml'
-    helmValues = readYaml file: './greeter/values.yaml'
+    helmChart = readYaml file: './k8s/greeter/Chart.yaml'
+    helmValues = readYaml file: './k8s/greeter/values.yaml'
 }
-
 pipeline {
     environment {
         imageName = "${helmValues.image.repository}"
@@ -58,7 +57,7 @@ pipeline {
                         }
                         stage('deploy') {
                             withKubeConfig([credentialsId: 'kubernetes-test']) {
-                                sh 'kubectl apply -f k8s.yaml'
+                                sh 'helm install greeter k8s/greeter'
                             }
                         }
                     }
