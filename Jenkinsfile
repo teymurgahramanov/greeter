@@ -1,7 +1,6 @@
 node {
     sh 'rm -rf'
 }
-}
 pipeline {
     environment {
         registry = 'https://registry.hub.docker.com'
