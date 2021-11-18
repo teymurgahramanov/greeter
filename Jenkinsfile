@@ -1,9 +1,3 @@
-node {
-    cleanWs()
-    checkout scm
-    helmChart = readYaml file: "${WORKSPACE}/k8s/greeter/Chart.yaml"
-    helmValues = readYaml file: "${WORKSPACE}/k8s/greeter/values.yaml"
-}
 pipeline {
     environment {
         registry = 'https://registry.hub.docker.com'
@@ -14,9 +8,11 @@ pipeline {
         slackChannel = "cicd"
         slackMessage = "Project: ${env.JOB_NAME} Build: ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)"
     }
-    options { 
+    options {
+        cleanWs()
         timestamps()
-        skipDefaultCheckout true    
+        skipDefaultCheckout true
+        disableConcurrentBuilds() 
     }
     triggers { pollSCM('* * * * *') }
     agent { docker { reuseNode true image 'golang' } }
@@ -24,6 +20,12 @@ pipeline {
         stage('pre') {
             steps {
                 slackSend tokenCredentialId:"${slackTokenId}", channel:"${slackChannel}", color:"warning", message:"🏁 Pipeline started – ${slackMessage}"
+                script {
+                    node {
+                        helmChart = readYaml file: "${WORKSPACE}/k8s/greeter/Chart.yaml"
+                        helmValues = readYaml file: "${WORKSPACE}/k8s/greeter/values.yaml"
+                    }
+                }
             }
         }
         stage('build_code') {
