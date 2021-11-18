@@ -16,9 +16,9 @@ spec:
         app: greeter
     spec:
       containers:
-      - name: greeter
-        image: "teymurgahramanov/greeter:v2"
-        imagePullPolicy: Always
+      - name: {{ .Chart.Name }}
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
         resources:
           requests:
             cpu: 10m
