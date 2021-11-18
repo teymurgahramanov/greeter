@@ -13,7 +13,10 @@ pipeline {
         slackChannel = "cicd"
         slackMessage = "Project: ${env.JOB_NAME} Build: ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)"
     }
-    options { timestamps() }
+    options { 
+        timestamps()
+        skipDefaultCheckout true    
+    }
     triggers { pollSCM('* * * * *') }
     agent { docker { reuseNode true image 'golang' } }
     stages {
