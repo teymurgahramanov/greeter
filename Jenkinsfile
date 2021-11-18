@@ -62,8 +62,8 @@ pipeline {
                             }
                         }
                         stage('deploy') {
-                            withKubeConfig([credentialsId: 'kubernetes-test']) {
-                                sh "helm install greeter ${WORKSPACE}/k8s/greeter"
+                            withCredentials([secretFile(credentialsId: 'kubernetes-test')]) {
+                                sh "helm upgrade --install greeter ${WORKSPACE}/k8s/greeter"
                             }
                         }
                     }
