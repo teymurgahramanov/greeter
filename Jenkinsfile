@@ -56,7 +56,7 @@ pipeline {
                             }
                         }
                         stage('deploy') {
-                            withKubeConfig([credentialsId: 'kubernetes-test', serverUrl: 'https://192.168.120.207:6443/']) {
+                            withKubeConfig([credentialsId: 'kubernetes-test']) {
                                 sh 'kubectl apply -f k8s.yaml'
                             }
                         }
