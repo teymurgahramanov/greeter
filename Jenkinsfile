@@ -40,7 +40,7 @@ pipeline {
                         } else {
                             imageTag = env.BRANCH_NAME
                         }
-                        image = docker.build("${imageName}:${imageTag}")
+                        image = docker.build("${imageName}:v2")
                         stage('test_image') {
                             sh "docker network create ${JOB_NAME}"
                             docker.image("${imageName}").withRun("--name ${JOB_NAME} --net ${JOB_NAME}") { test ->
@@ -52,6 +52,7 @@ pipeline {
                         stage('push_image') {
                             docker.withRegistry("${registry}","${registryCredId}") {
                                 image.push()
+                                image.push('latest')
                             }
                         }
                         stage('deploy') {

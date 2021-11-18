@@ -24,7 +24,7 @@ spec:
     spec:
       containers:
       - name: greeter
-        image: "teymurgahramanov/greeter:latest"
+        image: "teymurgahramanov/greeter:v2"
         imagePullPolicy: Always
         resources:
           requests:
