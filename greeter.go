@@ -29,12 +29,20 @@ func GetName() string {
 	return names[rand.Intn(len(names))]
 }
 
+func GetIp(r *http.Request) string {
+	forwarded := r.Header.Get("X-FORWARDED-FOR")
+	if forwarded != "" {
+		return forwarded
+	}
+	return r.RemoteAddr
+}
+
 func Greet(w http.ResponseWriter, r *http.Request) {
 	hostname, err := os.Hostname()
 	if err != nil {
 		fmt.Println(err)
 	}
-	fmt.Fprintf(w, "Hi! My name is %s %s and I live on %s", GetAdjective(), GetName(), hostname)
+	fmt.Fprintf(w, "Hi stranger from %s! My name is %s %s and I live on %s", GetIp(r), GetAdjective(), GetName(), hostname)
 }
 
 func main() {
