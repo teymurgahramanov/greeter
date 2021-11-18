@@ -1,12 +1,14 @@
 node {
+    checkout scm
     helmChart = readYaml file: './k8s/greeter/Chart.yaml'
     helmValues = readYaml file: './k8s/greeter/values.yaml'
 }
-
 pipeline {
     environment {
         registry = 'https://registry.hub.docker.com'
         registryCredId = "dockerhub-teymurgahramanov"
+        imageName =  "${helmValues.image.repository}"
+        imageTag = "${helmChart.appVersion}"
         slackTokenId = "slack-bot-token"
         slackChannel = "cicd"
         slackMessage = "Project: ${env.JOB_NAME} Build: ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)"
