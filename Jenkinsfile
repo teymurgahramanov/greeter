@@ -32,7 +32,7 @@ pipeline {
         stage('test_code') {
             steps {
                 sh 'go clean -cache'
-                sh 'go test ./... -v -short'  
+                sh 'go test -v -short'  
             }
         }
         stage('build_image') {                  
