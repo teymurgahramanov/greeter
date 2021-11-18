@@ -18,14 +18,14 @@ pipeline {
     stages {
         stage('pre') {
             steps {
-                sh 'rm -rf *'
-                checkout scm
-                slackSend tokenCredentialId:"${slackTokenId}", channel:"${slackChannel}", color:"warning", message:"🏁 Pipeline started – ${slackMessage}"
                 script {
                     node {
+                        sh 'rm -rf *'
+                        checkout scm
                         helmChart = readYaml file: "${WORKSPACE}/k8s/greeter/Chart.yaml"
                         helmValues = readYaml file: "${WORKSPACE}/k8s/greeter/values.yaml"
                     }
+                slackSend tokenCredentialId:"${slackTokenId}", channel:"${slackChannel}", color:"warning", message:"🏁 Pipeline started – ${slackMessage}"
                 }
             }
         }
