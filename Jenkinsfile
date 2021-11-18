@@ -45,6 +45,7 @@ pipeline {
             steps {
                 script {    
                     node {
+                        checkout scm
                         image = docker.build("${imageName}:${imageTag}")
                         stage('test_image') {
                             sh "docker network create ${JOB_NAME}"
