@@ -9,7 +9,6 @@ pipeline {
         slackMessage = "Project: ${env.JOB_NAME} Build: ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)"
     }
     options {
-        cleanWs()
         timestamps()
         skipDefaultCheckout true
         disableConcurrentBuilds() 
@@ -19,6 +18,8 @@ pipeline {
     stages {
         stage('pre') {
             steps {
+                cleanWs()
+                checkout scm
                 slackSend tokenCredentialId:"${slackTokenId}", channel:"${slackChannel}", color:"warning", message:"🏁 Pipeline started – ${slackMessage}"
                 script {
                     node {
