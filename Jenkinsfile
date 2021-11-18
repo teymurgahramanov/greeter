@@ -1,6 +1,7 @@
 pipeline {
     environment {
         imageName = 'teymurgahramanov/greeter'
+        imageTag = 'v2'
         registry = 'https://registry.hub.docker.com'
         registryCredId = "dockerhub-teymurgahramanov"
         slackTokenId = "slack-bot-token"
@@ -35,15 +36,10 @@ pipeline {
                 script {    
                     node {
                         checkout scm
-                        if ( env.BRANCH_NAME == 'master' || 'main' || 'null' ) {
-                            imageTag = 'latest'
-                        } else {
-                            imageTag = env.BRANCH_NAME
-                        }
-                        image = docker.build("${imageName}:v2")
+                        image = docker.build("${imageName}:${imageTag}")
                         stage('test_image') {
                             sh "docker network create ${JOB_NAME}"
-                            docker.image("${imageName}").withRun("--name ${JOB_NAME} --net ${JOB_NAME}") { test ->
+                            docker.image(image).withRun("--name ${JOB_NAME} --net ${JOB_NAME}") { test ->
                                 docker.image("curlimages/curl").inside("--net ${JOB_NAME}") { 
                                     sh 'curl http://${JOB_NAME}:8080'
                                 }
