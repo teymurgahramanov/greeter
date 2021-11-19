@@ -1,10 +1,8 @@
-node {
-    sh 'rm -rf *'
-    checkout scm
-    helmChart = readYaml file: "${WORKSPACE}/k8s/greeter/Chart.yaml"
-    helmValues = readYaml file: "${WORKSPACE}/k8s/greeter/values.yaml"
+def NotifyOnSlack(token,channel,color,message) {
+    slackSend tokenCredentialId:token, channel:channel, color:color, message:message
 }
-pipeline {
+
+    pipeline {
     environment {
         registry = 'https://registry.hub.docker.com'
         registryCredId = "dockerhub-teymurgahramanov"
@@ -20,41 +18,18 @@ pipeline {
         disableConcurrentBuilds() 
     }
     triggers { pollSCM('* * * * *') }
-    agent { docker { image 'golang' } }
+    agent none
     stages {
-        stage('pre') {
-            steps {
-                slackSend tokenCredentialId:"${slackTokenId}", channel:"${slackChannel}", color:"warning", message:"🏁 Pipeline started – ${slackMessage}"
-            }
-        }
-        stage('build_code') {
-            steps {
-                sh 'cd ${GOPATH}/src'
-                sh 'mkdir -p ${GOPATH}/src/${JOB_NAME}'
-                sh 'cp -r ${WORKSPACE}/* ${GOPATH}/src/${JOB_NAME}'
-                sh 'go build -o greeter'
-            }
-        }
-        stage('test_code') {
-            steps {
-                sh 'go clean -cache'
-                sh 'go test -v -short'  
-            }
-        }
-        stage('build_image') {                  
+    stage('build_image') {                  
             steps {
                 script {    
-                    node {
+                    node {                 
+                        NotifyOnSlack("${slackTokenId}","${slackChannel}","warning","🏁 Pipeline started – ${slackMessage}")
+                        sh 'rm -rf *'
                         checkout scm
+                        helmChart = readYaml file: "${WORKSPACE}/k8s/greeter/Chart.yaml"
+                        helmValues = readYaml file: "${WORKSPACE}/k8s/greeter/values.yaml"
                         image = docker.build("${imageName}:${imageTag}")
-                        stage('test_image') {
-                            sh "docker network create ${JOB_NAME}"
-                            docker.image("${imageName}:${imageTag}").withRun("--name ${JOB_NAME} --net ${JOB_NAME}") { test ->
-                                docker.image("curlimages/curl").inside("--net ${JOB_NAME}") { 
-                                    sh 'curl http://${JOB_NAME}:8080'
-                                }
-                            }
-                        }    
                         stage('push_image') {
                             docker.withRegistry("${registry}","${registryCredId}") {
                                 image.push()
