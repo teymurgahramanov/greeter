@@ -7,7 +7,7 @@ pipeline {
         registryCredId = "dockerhub-teymurgahramanov"
         slackTokenId = "slack-bot-token"
         slackChannel = "cicd"
-        slackMessage = "Project: ${env.JOB_NAME} Branch: ${env.BRANCH_NAME} Build: ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)"
+        slackMessage = "Project: ${env.JOB_NAME} Build: ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)"
     }
     options {
         timestamps()
@@ -26,7 +26,11 @@ pipeline {
                     helmChart = readYaml file: "${WORKSPACE}/k8s/greeter/Chart.yaml"
                     helmValues = readYaml file: "${WORKSPACE}/k8s/greeter/values.yaml"
                     imageName =  "${helmValues.image.repository}"
-                    imageTag = "${helmChart.appVersion}"
+                    if (env.BRANCH_NAME == 'main') {
+                        imageTag = "${helmChart.appVersion}"
+                    } else {
+                        imageTag = env.BRANCH_NAME
+                    }
                     image = docker.build("${imageName}:${imageTag}")
                 }
             }
@@ -35,7 +39,19 @@ pipeline {
             steps {
                 script {
                     docker.withRegistry("${registry}","${registryCredId}") {
-                        image.push()
+                        image.push("${imageTag}")
+                    }
+                }
+            }
+        }
+        stage('push_image_latest') {
+            when {
+                branch 'main'  
+            }        
+            steps {
+                script {
+                    docker.withRegistry("${registry}","${registryCredId}") {
+                        image.push("${imageTag}")
                         image.push('latest')
                     }
                 }
@@ -45,7 +61,7 @@ pipeline {
             steps {
                 script {
                     withKubeConfig([credentialsId: 'kubernetes-test']) {
-                        sh "helm upgrade --install greeter ${WORKSPACE}/k8s/greeter"
+                        sh "helm upgrade --install --set image.tag=${imageTag} greeter ${WORKSPACE}/k8s/greeter"
                     }
                 }
             }
