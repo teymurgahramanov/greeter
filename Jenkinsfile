@@ -7,7 +7,7 @@ pipeline {
         registryCredId = "dockerhub-teymurgahramanov"
         slackTokenId = "slack-bot-token"
         slackChannel = "cicd"
-        slackMessage = "Project: ${env.JOB_NAME} Build: ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)"
+        slackMessage = "Project: ${env.JOB_NAME} Branch: ${env.BRANCH_NAME} Build: ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)"
     }
     options {
         timestamps()
