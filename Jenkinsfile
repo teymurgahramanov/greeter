@@ -1,3 +1,7 @@
+void NotifyOnSlack(nToken,nChannel,nColor,nMessage) {
+    slackSend tokenCredentialId:nToken, channel:nChannel, color:nColor, message:nMessage
+}
+
 pipeline {
     environment {
         registry = 'https://registry.hub.docker.com'
@@ -16,6 +20,7 @@ pipeline {
         stage('build') {
             steps {
                 script {
+                    NotifyOnSlack("${slackTokenId}","${slackChannel}","warning","🏁 Pipeline started – ${slackMessage}")
                     helmChart = readYaml file: "${WORKSPACE}/k8s/greeter/Chart.yaml"
                     helmValues = readYaml file: "${WORKSPACE}/k8s/greeter/values.yaml"
                     imageName =  "${helmValues.image.repository}"
