@@ -17,7 +17,7 @@ pipeline {
     triggers { pollSCM('* * * * *') }
     agent { label 'master' }
     stages {
-        stage('build') {
+        stage('build_image') {
             steps {
                 script {
                     cleanWs()
@@ -31,7 +31,7 @@ pipeline {
                 }
             }
         }
-        stage('push') {
+        stage('push_image') {
             steps {
                 script {
                     docker.withRegistry("${registry}","${registryCredId}") {
@@ -41,7 +41,7 @@ pipeline {
                 }
             }
         }
-        stage('deploy') {
+        stage('deploy_to_dev') {
             steps {
                 script {
                     withKubeConfig([credentialsId: 'kubernetes-test']) {
@@ -50,6 +50,18 @@ pipeline {
                 }
             }
         }
+        stage('deploy_to_prod') {
+            when {
+                branch 'main'  
+            }
+            steps {
+                script {
+                    withKubeConfig([credentialsId: 'kubernetes-prod']) {
+                        sh "helm upgrade --install greeter ${WORKSPACE}/k8s/greeter"
+                    }
+                }
+            }
+        }        
     }
     post {
         always {
