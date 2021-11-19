@@ -18,7 +18,7 @@ pipeline {
         disableConcurrentBuilds() 
     }
     triggers { pollSCM('* * * * *') }
-    agent none
+    agent { label 'master' }
     stages {
     stage('build_image') {                  
             steps {
