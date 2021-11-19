@@ -23,7 +23,7 @@ func Greet(w http.ResponseWriter, r *http.Request) {
 		fmt.Println(err)
 		os.Exit(1)
 	}
-	fmt.Fprintf(w, "Hi stranger from %s! My name is %s and I live on %s", GetIp(r), strings.ToTitle(docker_namegenerator.GetRandomName(0)), hostname)
+	fmt.Fprintf(w, "👋 Hi stranger from %s! My name is %s and I live on %s.", GetIp(r), strings.ToTitle(docker_namegenerator.GetRandomName(0)), hostname)
 }
 
 func main() {

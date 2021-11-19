@@ -51,7 +51,6 @@ pipeline {
             steps {
                 script {
                     docker.withRegistry("${registry}","${registryCredId}") {
-                        image.push("${imageTag}")
                         image.push('latest')
                     }
                 }
