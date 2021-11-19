@@ -2,7 +2,7 @@ def NotifyOnSlack(token,channel,color,message) {
     slackSend tokenCredentialId:token, channel:channel, color:color, message:message
 }
 
-    pipeline {
+pipeline {
     environment {
         registry = 'https://registry.hub.docker.com'
         registryCredId = "dockerhub-teymurgahramanov"
