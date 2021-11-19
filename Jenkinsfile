@@ -20,26 +20,24 @@ pipeline {
     triggers { pollSCM('* * * * *') }
     agent { label 'master' }
     stages {
-    stage('build_image') {                  
+        stage('build_image') {                  
             steps {
-                script {    
-                    node {                 
-                        NotifyOnSlack("${slackTokenId}","${slackChannel}","warning","🏁 Pipeline started – ${slackMessage}")
-                        sh 'rm -rf *'
-                        checkout scm
-                        helmChart = readYaml file: "${WORKSPACE}/k8s/greeter/Chart.yaml"
-                        helmValues = readYaml file: "${WORKSPACE}/k8s/greeter/values.yaml"
-                        image = docker.build("${imageName}:${imageTag}")
-                        stage('push_image') {
-                            docker.withRegistry("${registry}","${registryCredId}") {
-                                image.push()
-                                image.push('latest')
-                            }
+                script {                
+                    NotifyOnSlack("${slackTokenId}","${slackChannel}","warning","🏁 Pipeline started – ${slackMessage}")
+                    sh 'rm -rf *'
+                    checkout scm
+                    helmChart = readYaml file: "${WORKSPACE}/k8s/greeter/Chart.yaml"
+                    helmValues = readYaml file: "${WORKSPACE}/k8s/greeter/values.yaml"
+                    image = docker.build("${imageName}:${imageTag}")
+                    stage('push_image') {
+                        docker.withRegistry("${registry}","${registryCredId}") {
+                            image.push()
+                            image.push('latest')
                         }
-                        stage('deploy') {
-                            withKubeConfig([credentialsId: 'kubernetes-test']) {
-                                sh "helm upgrade --install greeter ${WORKSPACE}/k8s/greeter"
-                            }
+                    }
+                    stage('deploy') {
+                        withKubeConfig([credentialsId: 'kubernetes-test']) {
+                            sh "helm upgrade --install greeter ${WORKSPACE}/k8s/greeter"
                         }
                     }
                 }
