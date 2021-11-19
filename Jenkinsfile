@@ -1,7 +1,6 @@
 void NotifyOnSlack(nToken,nChannel,nColor,nMessage) {
     slackSend tokenCredentialId:nToken, channel:nChannel, color:nColor, message:nMessage
 }
-
 pipeline {
     environment {
         registry = 'https://registry.hub.docker.com'
@@ -12,7 +11,8 @@ pipeline {
     }
     options {
         timestamps()
-        disableConcurrentBuilds() 
+        disableConcurrentBuilds()
+        skipDefaultCheckout(true)
     }
     triggers { pollSCM('* * * * *') }
     agent { label 'master' }
@@ -20,6 +20,8 @@ pipeline {
         stage('build') {
             steps {
                 script {
+                    cleanWs()
+                    checkout scm
                     NotifyOnSlack("${slackTokenId}","${slackChannel}","warning","🏁 Pipeline started – ${slackMessage}")
                     helmChart = readYaml file: "${WORKSPACE}/k8s/greeter/Chart.yaml"
                     helmValues = readYaml file: "${WORKSPACE}/k8s/greeter/values.yaml"
@@ -47,6 +49,20 @@ pipeline {
                     }
                 }
             }
+        }
+    }
+    post {
+        always {
+            sh "docker system prune -af"
+        }
+        success {
+            NotifyOnSlack("${slackTokenId}","${slackChannel}","green","👍 Pipeline finished successfully – ${slackMessage}")
+        }
+        failure {
+            NotifyOnSlack("${slackTokenId}","${slackChannel}","danger","☠️ Pipeline failed – ${slackMessage}")
+        }
+        aborted {
+            NotifyOnSlack("${slackTokenId}","${slackChannel}","danger","❕ Pipeline aborted – ${slackMessage}")
         }
     }
 }
