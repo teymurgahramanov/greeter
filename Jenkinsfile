@@ -23,7 +23,7 @@ pipeline {
                 script {
                     cleanWs()
                     checkout scm
-                    //Prevent build if commit mesage contains keyword
+                    //Prevent build if commit mesage contains keyword. Will mark next jobs as 'Failed'. Need to be improved.
                     result = sh (script: "git log -1 | grep '.*\\[ci_skip\\].*'", returnStatus: true)
                     if (result == 0) {
                         currentBuild.result = 'ABORTED'
