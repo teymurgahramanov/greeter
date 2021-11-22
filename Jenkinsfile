@@ -31,7 +31,9 @@ pipeline {
                     } else {
                         imageTag = env.BRANCH_NAME
                     }
-                    image = docker.build("${imageName}")
+                    docker.withRegistry("${registry}","${registryCredId}") {
+                        image = docker.build("${imageName}")
+                    }
                 }
             }
         }
@@ -44,7 +46,6 @@ pipeline {
                 }
             }
         }
-        /* NOT WORKING 
         stage('push_image_latest') {
             when {
                 branch 'main'  
@@ -57,7 +58,6 @@ pipeline {
                 }
             }
         }
-        */
         stage('deploy_to_dev') {
             steps {
                 script {
