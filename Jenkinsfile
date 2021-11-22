@@ -23,6 +23,7 @@ pipeline {
                 script {
                     cleanWs()
                     checkout scm
+                    //Prevent build if commit mesage contains keyword
                     result = sh (script: "git log -1 | grep '.*\\[ci_skip\\].*'", returnStatus: true)
                     if (result == 0) {
                         echo currentBuild.currentResult
@@ -98,7 +99,6 @@ pipeline {
         }
         aborted {
             NotifyOnSlack("${slackTokenId}","${slackChannel}","danger","❕ Pipeline aborted – ${slackMessage}")
-            exit 0
         }
     }
 }
