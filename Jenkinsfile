@@ -26,7 +26,6 @@ pipeline {
                     //Prevent build if commit mesage contains keyword
                     result = sh (script: "git log -1 | grep '.*\\[ci_skip\\].*'", returnStatus: true)
                     if (result == 0) {
-                        echo currentBuild.currentResult
                         currentBuild.result = 'ABORTED'
                         currentBuild.displayName = "#${env.BUILD_NUMBER} skipped"
                         return
