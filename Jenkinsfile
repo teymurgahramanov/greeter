@@ -19,6 +19,9 @@ pipeline {
     agent { label 'master' }
     stages {
         stage('build_image') {
+            when {
+                changelog '.*^\\[_lets_build!\\] .+$'
+            }
             steps {
                 script {
                     cleanWs()
