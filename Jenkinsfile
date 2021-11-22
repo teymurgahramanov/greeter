@@ -23,6 +23,13 @@ pipeline {
                 script {
                     cleanWs()
                     checkout scm
+                    //Prevent build if commit mesage contains keyword. Will mark next jobs as 'Failed'. Need to be improved.
+                    result = sh (script: "git log -1 | grep '.*\\[ci_skip\\].*'", returnStatus: true)
+                    if (result == 0) {
+                        currentBuild.result = 'ABORTED'
+                        currentBuild.displayName = "#${env.BUILD_NUMBER} skipped"
+                        return
+                    }
                     NotifyOnSlack("${slackTokenId}","${slackChannel}","warning","🏁 Pipeline started – ${slackMessage}")
                     helmChart = readYaml file: "${WORKSPACE}/k8s/greeter/Chart.yaml"
                     helmValues = readYaml file: "${WORKSPACE}/k8s/greeter/values.yaml"
