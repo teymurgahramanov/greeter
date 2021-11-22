@@ -3,6 +3,7 @@ void NotifyOnSlack(nToken,nChannel,nColor,nMessage) {
 }
 pipeline {
     environment {
+        mainBranch = 'main'
         registry = 'https://registry.hub.docker.com'
         registryCredId = "dockerhub-teymurgahramanov"
         slackTokenId = "slack-bot-token"
@@ -26,14 +27,12 @@ pipeline {
                     helmChart = readYaml file: "${WORKSPACE}/k8s/greeter/Chart.yaml"
                     helmValues = readYaml file: "${WORKSPACE}/k8s/greeter/values.yaml"
                     imageName =  "${helmValues.image.repository}"
-                    if (env.BRANCH_NAME == 'main') {
+                    if (env.BRANCH_NAME == "${mainBranch}") {
                         imageTag = "${helmChart.appVersion}"
                     } else {
                         imageTag = env.BRANCH_NAME
                     }
-                    docker.withRegistry("${registry}","${registryCredId}") {
-                        image = docker.build("${imageName}")
-                    }
+                    image = docker.build("${imageName}:${imageTag}")
                 }
             }
         }
@@ -41,19 +40,10 @@ pipeline {
             steps {
                 script {
                     docker.withRegistry("${registry}","${registryCredId}") {
-                        image.push("${imageTag}")
-                    }
-                }
-            }
-        }
-        stage('push_image_latest') {
-            when {
-                branch 'main'  
-            }        
-            steps {
-                script {
-                    docker.withRegistry("${registry}","${registryCredId}") {
-                        image.push('latest')
+                        image.push()
+                        if (env.BRANCH_NAME == "${mainBranch}") {
+                            image.push("latest")
+                        } 
                     }
                 }
             }
