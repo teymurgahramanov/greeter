@@ -58,6 +58,15 @@ pipeline {
                 }
             }
         }
+        stage('lint_chart') {
+            steps {
+                script {
+                    withKubeConfig([credentialsId: 'kubernetes-test']) {
+                        sh "helm lint ${WORKSPACE}/k8s/greeter"
+                    }
+                }
+            }
+        }
         stage('deploy_to_dev') {
             steps {
                 script {

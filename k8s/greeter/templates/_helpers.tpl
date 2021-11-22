@@ -35,6 +35,7 @@ Common labels
 */}}
 {{- define "greeter.labels" -}}
 helm.sh/chart: {{ include "greeter.chart" . }}
+app: greeter
 {{ include "greeter.selectorLabels" . }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}

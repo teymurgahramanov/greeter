@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ include "greeter.fullname" . }}
+  namespace: {{ include "greeter.fullname" . }}
   labels:
     {{- include "greeter.labels" . | nindent 4 }}
 spec:
@@ -35,16 +36,16 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - name: http
-              containerPort: 8080
+              containerPort: {{ .Values.service.port }}
               protocol: TCP
           livenessProbe:
             httpGet:
               path: /
-              port: 8080
+              port: {{ .Values.service.port }}
           readinessProbe:
             httpGet:
               path: /
-              port: 8080
+              port: {{ .Values.service.port }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       {{- with .Values.nodeSelector }}
