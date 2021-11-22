@@ -28,6 +28,7 @@ pipeline {
                         echo currentBuild.currentResult
                         currentBuild.result = 'ABORTED'
                         currentBuild.displayName = "#${env.BUILD_NUMBER} skipped"
+                        return
                     }
                     NotifyOnSlack("${slackTokenId}","${slackChannel}","warning","🏁 Pipeline started – ${slackMessage}")
                     helmChart = readYaml file: "${WORKSPACE}/k8s/greeter/Chart.yaml"
