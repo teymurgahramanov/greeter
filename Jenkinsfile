@@ -40,7 +40,7 @@ pipeline {
             steps {
                 script {
                     docker.withRegistry("${registry}","${registryCredId}") {
-                        image.push()
+                        image.push("${imageTag}")
                         if (env.BRANCH_NAME == "${mainBranch}") {
                             image.push("latest")
                         } 
