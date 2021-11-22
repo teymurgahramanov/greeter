@@ -97,6 +97,7 @@ pipeline {
         }
         aborted {
             NotifyOnSlack("${slackTokenId}","${slackChannel}","danger","❕ Pipeline aborted – ${slackMessage}")
+            exit 0
         }
     }
 }
