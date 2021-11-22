@@ -19,13 +19,15 @@ pipeline {
     agent { label 'master' }
     stages {
         stage('build_image') {
-            when {
-                changelog '.*^\\[_lets_build!\\] .+$'
-            }
             steps {
                 script {
                     cleanWs()
                     checkout scm
+                    result = sh (script: "git log -1 | grep '.*\\[ci_skip\\].*'", returnStatus: false)
+                    if (result == 0) {
+                        echo ("'ci skip' spotted in git commit. Aborting.")
+                        success ("'ci skip' spotted in git commit. Aborting.")
+                    }
                     NotifyOnSlack("${slackTokenId}","${slackChannel}","warning","🏁 Pipeline started – ${slackMessage}")
                     helmChart = readYaml file: "${WORKSPACE}/k8s/greeter/Chart.yaml"
                     helmValues = readYaml file: "${WORKSPACE}/k8s/greeter/values.yaml"
