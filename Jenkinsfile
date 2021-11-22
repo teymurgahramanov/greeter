@@ -25,8 +25,9 @@ pipeline {
                     checkout scm
                     result = sh (script: "git log -1 | grep '.*\\[ci_skip\\].*'", returnStatus: true)
                     if (result == 0) {
-                        echo ("'ci skip' spotted in git commit. Aborting.")
-                        success ("'ci skip' spotted in git commit. Aborting.")
+                        echo currentBuild.currentResult
+                        currentBuild.result = 'ABORTED'
+                        currentBuild.displayName = "#${env.BUILD_NUMBER} skipped"
                     }
                     NotifyOnSlack("${slackTokenId}","${slackChannel}","warning","🏁 Pipeline started – ${slackMessage}")
                     helmChart = readYaml file: "${WORKSPACE}/k8s/greeter/Chart.yaml"
