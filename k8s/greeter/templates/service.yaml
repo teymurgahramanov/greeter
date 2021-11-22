@@ -1,14 +1,17 @@
-kind: Service
 apiVersion: v1
+kind: Service
 metadata:
-  name: greeter-service
-  namespace: greeter
+  name: {{ include "greeter.fullname" . }}
+  namespace: {{ include "greeter.fullname" . }}
+  labels:
+    {{- include "greeter.labels" . | nindent 4 }}
 spec:
-  selector:
-    app: greeter
+  type: {{ .Values.service.type }}
   ports:
-    - protocol: TCP
-      port: 8080
-      targetPort: 8080
-      nodePort: 30080
-  type: NodePort
+    - port: {{ .Values.service.port }}
+      targetPort: {{ .Values.service.port }}
+      nodePort: {{ .Values.service.nodePort }}
+      protocol: TCP
+      name: http
+  selector:
+    {{- include "greeter.selectorLabels" . | nindent 4 }}

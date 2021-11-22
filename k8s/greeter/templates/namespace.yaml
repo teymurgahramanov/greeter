@@ -1,6 +1,6 @@
 kind: Namespace
 apiVersion: v1
 metadata:
-  name: greeter
+  name: {{ include "greeter.fullname" . }}
   labels:
-    app: greeter
+    {{- include "greeter.labels" . | nindent 4 }}

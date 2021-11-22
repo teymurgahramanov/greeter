@@ -31,7 +31,9 @@ pipeline {
                     } else {
                         imageTag = env.BRANCH_NAME
                     }
-                    image = docker.build("${imageName}:${imageTag}")
+                    docker.withRegistry("${registry}","${registryCredId}") {
+                        image = docker.build("${imageName}")
+                    }
                 }
             }
         }
@@ -52,6 +54,15 @@ pipeline {
                 script {
                     docker.withRegistry("${registry}","${registryCredId}") {
                         image.push('latest')
+                    }
+                }
+            }
+        }
+        stage('lint_chart') {
+            steps {
+                script {
+                    withKubeConfig([credentialsId: 'kubernetes-test']) {
+                        sh "helm lint ${WORKSPACE}/k8s/greeter"
                     }
                 }
             }
