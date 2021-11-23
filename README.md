@@ -29,4 +29,4 @@ Used credentials:
 - Slack bot token (Secret text)
 
 ### Helm and Kubernetes
-- Custom values and templates
+- Custom variables and templates
