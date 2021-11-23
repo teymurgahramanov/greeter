@@ -9,7 +9,7 @@ Experimental project to train on building CI/CD pipeline. Stack includes Golang,
 - Slack notifications
 
 ### Simple Go application
-Just makes greeting when accessing page ¯\\__(ツ)_/¯. Displays user's X-Forwarded-For IP, hostname, and generates funny string consist of random adjectives and sciencist names (Used [namesgenerator](https://github.com/moby/moby/blob/master/pkg/namesgenerator/names-generator.go) package which used by Docker to generate random container names)
+Just makes greeting when accessing page. Displays user's IP, hostname, and generates funny string consist of random adjectives and sciencist names (Used [namesgenerator](https://github.com/moby/moby/blob/master/pkg/namesgenerator/names-generator.go) package which used by Docker to generate random container names)
 
 ### Jenkins
 Installed outside of K8S cluster using Docker Compose. Also installed [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/) and [helm](https://helm.sh/docs/intro/install/) binaries on the same server and exposed them to Jenkins container.
